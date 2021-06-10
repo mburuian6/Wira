@@ -73,14 +73,14 @@ public class AuthController {
         return new ResponseEntity<>(authService.getUserByUsername(username), HttpStatus.OK);
     }
     
-    //1
+    //forgot password
     @PostMapping("/forgotpassword")
     public ResponseEntity forgotPassword(@RequestBody UserDto userdto){
         ResetPasswordTokenResponse token = authService.forgotPassword(userdto);
         return new ResponseEntity(HttpStatus.OK);
     }
     
-    //2
+    //Reset password
     @PostMapping("/resetpassword")
     public ResponseEntity resetPassword(@RequestBody ResetPasswordTokenResponse resetPwd){
         boolean resetPassword = authService.resetPassword(resetPwd.getToken(), resetPwd.getPassword());
@@ -91,5 +91,20 @@ public class AuthController {
             return new ResponseEntity("Token is already used. Try again",HttpStatus.FORBIDDEN);
         }
     }
+    
+    //RANKING
+    //update ranking
+    @PostMapping("/updaterank/{username}")
+    public ResponseEntity updateRank(@PathVariable @RequestBody String username, @PathVariable @RequestBody int newRatingValue){
+        try{
+            authService.updateRating(newRatingValue, username);
+            return new ResponseEntity("Rating Value Updated!",HttpStatus.OK);
+        }
+        catch(Exception e){
+            return new ResponseEntity("Failed to update Rating!",HttpStatus.FORBIDDEN);
+        }
+    }
+    
+    
     
 }

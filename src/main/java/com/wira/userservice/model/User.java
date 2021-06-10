@@ -45,6 +45,8 @@ public class User {
 
     private Instant joined;
 
-    private double rating;
+    private double currentRating;
+    
+    private short numberOfRatings;
 
 }

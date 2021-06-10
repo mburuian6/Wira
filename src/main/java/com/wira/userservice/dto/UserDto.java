@@ -22,5 +22,6 @@ public class UserDto {
     private String phone;
     private String gender;
     private Instant joined;
-    private double rating; 
+    private double currentRating;    
+    private short numberOfRatings;
 }

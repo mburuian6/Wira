@@ -60,7 +60,8 @@ public class AuthService {
         user.setGender(registerRequest.getGender());
         user.setPhone(registerRequest.getPhone());
         user.setJoined(Instant.now());
-        user.setRating(0);
+        user.setCurrentRating(0);
+        user.setNumberOfRatings((short) 0);
         
         System.out.println("register request:"+ user.getUsername()+" :"+user.getPassword());
         User save = userRepository.save(user);
@@ -122,6 +123,8 @@ public class AuthService {
         userDto.setEmail(user.getEmail());
         userDto.setGender(user.getGender());
         userDto.setJoined(user.getJoined());
+        userDto.setCurrentRating(user.getCurrentRating());
+        userDto.setNumberOfRatings(user.getNumberOfRatings());
         return userDto;
     }
     
@@ -199,14 +202,27 @@ public class AuthService {
     }
     
     // update rating
-    private void updateRating(double rating,String username){
-        User findUserByUsername = userRepository.findUserByUsername(username);
+    public void updateRating(double newRating,String username){
+        //get user's current rank
+        User user = userRepository.findUserByUsername(username);
+        double currentRating = user.getCurrentRating();
+        short numberOfRatings = user.getNumberOfRatings();
+        double newRank = newRating;
         
+        if(numberOfRatings != 0){
+            //calculate new val
+            newRank = getNewRank(currentRating,numberOfRatings,newRating);            
+        }
+        
+        //update value and num of Rating
+        user.setCurrentRating(newRank);
+        numberOfRatings+=1;
+        user.setNumberOfRatings(numberOfRatings);
         
     }
     
     //rating formula - weighted average
-    private double rankingFormula(double currentValue,double numberOfRatings, double newValue){
+    private double getNewRank(double currentValue,short numberOfRatings, double newValue){
         double total = currentValue * numberOfRatings;
         total += newValue;
         return total/(numberOfRatings+1);
